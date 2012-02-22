@@ -1,7 +1,6 @@
 package com.housemate.android;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 import android.content.Context;
 import android.view.LayoutInflater;
