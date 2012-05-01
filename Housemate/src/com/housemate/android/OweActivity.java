@@ -1,6 +1,6 @@
 package com.housemate.android;
 
-public class IOUActivity
+public class OweActivity
 {
 
 }

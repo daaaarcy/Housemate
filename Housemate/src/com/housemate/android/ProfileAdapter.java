@@ -1,25 +1,25 @@
 package com.housemate.android;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.bonsai.android.R;
 
-public class MyProfileAdapter extends BaseAdapter
+import java.util.ArrayList;
+
+public class ProfileAdapter extends BaseAdapter
 {
-    ArrayList<MyProfileEntry> entryList = new ArrayList<MyProfileEntry>();
+    ArrayList<ProfileEntry> entryList;
     Context context;
     LayoutInflater inflater;
 
-    public MyProfileAdapter(Context context, ArrayList<MyProfileEntry> entryList)
+    public ProfileAdapter(Context context, ArrayList<ProfileEntry> entryList)
     {
         this.context = context;
+        inflater = LayoutInflater.from(context);
         this.entryList = entryList;
     }
 
@@ -43,25 +43,26 @@ public class MyProfileAdapter extends BaseAdapter
         ViewHolder viewHolder;
         if (convertView == null)
         {
-            convertView = inflater.inflate(R.layout.myprofilerowlayout, null);
+            convertView = inflater.inflate(R.layout.profileentrylayout, null);
             viewHolder = new ViewHolder();
-            viewHolder.name = (TextView) convertView.findViewById(R.id.myProfEntryName);
-            viewHolder.amount = (TextView) convertView.findViewById(R.id.myProfEntryAmount);
+            viewHolder.name = (TextView) convertView.findViewById(R.id.profEntryName);
+            viewHolder.amount = (TextView) convertView.findViewById(R.id.profEntryAmount);
+            convertView.setTag(viewHolder);
         }
         else
         {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        
+
         viewHolder.name.setText(entryList.get(position).getName());
-        viewHolder.amount.setText(Float.toString(entryList.get(position).getAmount()));
-        
+        viewHolder.amount.setText(Double.toString(entryList.get(position).getAmount()));
+
         return convertView;
     }
 
     static class ViewHolder
     {
         TextView name;
-        TextView amount; 
+        TextView amount;
     }
 }

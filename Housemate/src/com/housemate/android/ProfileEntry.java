@@ -1,12 +1,12 @@
 package com.housemate.android;
 
 
-public class MyProfileEntry
+public class ProfileEntry
 {
     private String name;
-    private float amount;
-    
-    public MyProfileEntry(String name, float amount)
+    private double amount;
+
+    public ProfileEntry(String name, double amount)
     {
         super();
         this.name = name;
@@ -23,7 +23,7 @@ public class MyProfileEntry
         this.name = name;
     }
 
-    public float getAmount()
+    public double getAmount()
     {
         return amount;
     }
