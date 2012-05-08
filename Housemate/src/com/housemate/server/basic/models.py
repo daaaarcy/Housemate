@@ -12,30 +12,18 @@ class User(models.Model):
 class Household(models.Model):
     size = models.IntegerField()
     residents = models.ManyToManyField('User')
-    """
-    mate_0 = models.ForeignKey('User', related_name='mate_0')
-    mate_1 = models.ForeignKey('User', related_name='mate_1',
-            null=True, on_delete=models.SET_NULL)
-    mate_2 = models.ForeignKey('User', related_name='mate_2',
-            null=True, on_delete=models.SET_NULL)
-    #mate_4 = models.ForeignKey('User')
-    #mate_5 = models.ForeignKey('User')
-    #mate_6 = models.ForeignKey('User')
-    #mate_7 = models.ForeignKey('User')
-    #mate_8 = models.ForeignKey('User')
-    #mate_9 = models.ForeignKey('User')
-    #mate_10 = models.ForeignKey('User')
-    """
+
     def __unicode__(self):
         return self.id
 
 class Owe(models.Model):
-    borrower_id = models.ForeignKey('User', related_name='borrower')
-    lender_id = models.ForeignKey('User', related_name='lender')
+    borrower = models.ForeignKey('User', related_name='borrower')
+    lender = models.ForeignKey('User', related_name='lender')
     datetime = models.DateTimeField(auto_now=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    title = models.CharField(max_length=100)
+    amount = models.DecimalField(default=0, max_digits=10, decimal_places=2)
+    title = models.CharField(default='Untitled', max_length=100)
     desc = models.TextField(blank=True)
+    is_pending = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.id
