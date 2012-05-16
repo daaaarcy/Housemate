@@ -8,13 +8,13 @@ class User(models.Model):
 
     def __unicode__(self):
         return self.user_id
-    
+
 class Household(models.Model):
     size = models.IntegerField()
     residents = models.ManyToManyField('User')
 
     def __unicode__(self):
-        return self.id
+        return str(self.id)
 
 class Owe(models.Model):
     borrower = models.ForeignKey('User', related_name='borrower')
@@ -26,4 +26,5 @@ class Owe(models.Model):
     is_pending = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.id
+        return ",".join([str(self.id), str(self.borrower.user_id),
+            str(self.lender.user_id),str(self.lender.first_name)])

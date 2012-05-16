@@ -1,0 +1,11 @@
+[
+{% for o in oweList %}
+    {% if forloop.counter != 1 %},{% endif %}
+    {
+        lender : "{{o.lender__first_name}} {{o.lender__last_name}}",
+        borrower : "{{o.borrower__first_name}} {{o.borrower__last_name}}",
+        title : "{{o.title}}",
+        amount : {{o.amount}}
+    }
+{% endfor %}
+]
