@@ -55,6 +55,12 @@ public class ProfileBorrowEntry implements IEntry
         return EntryType.BORROW.ordinal();
     }
 
+    @Override
+    public String toString()
+    {
+        return "I borrowed " + owe.getAmount() + " to " + owe.getName();
+    }
+
     static class ViewHolder
     {
         TextView name;

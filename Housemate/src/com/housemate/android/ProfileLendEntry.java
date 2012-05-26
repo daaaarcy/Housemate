@@ -55,6 +55,12 @@ public class ProfileLendEntry implements IEntry
         return EntryType.LEND.ordinal();
     }
 
+    @Override
+    public String toString()
+    {
+        return "I lent " + owe.getAmount() + " to " + owe.getName();
+    }
+
     static class ViewHolder
     {
         TextView name;
