@@ -1,14 +1,15 @@
 package com.housemate.android;
 
-import com.bonsai.android.R;
-
 import android.app.Activity;
 import android.os.Bundle;
+import com.bonsai.android.R;
 
-public class HousemateActivity extends Activity {
-    
+public class HousemateActivity extends Activity
+{
+
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
     }
