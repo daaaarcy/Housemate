@@ -4,8 +4,10 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.bonsai.android.R;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -35,6 +37,20 @@ public class ProfileActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.profile);
+
+        // Gets refresh button and set on click listener
+        final Button refreshButton = (Button) findViewById(R.id.prof_refresh_btn);
+        refreshButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                readProfileEntries();
+            }
+        });
+
+        // Reads profile entries from server
         readProfileEntries();
     }
 
@@ -83,7 +99,10 @@ public class ProfileActivity extends ListActivity
                 entries.add(i, entry);
             }
             ProfileAdapter profileAdapter = new ProfileAdapter(entries);
-            this.setListAdapter(profileAdapter);
+
+//            final ListView listView = (ListView) findViewById(R.id.prof_entry_list);
+//            listView.setAdapter(profileAdapter);
+            setListAdapter(profileAdapter);
         }
         catch (JSONException e)
         {
