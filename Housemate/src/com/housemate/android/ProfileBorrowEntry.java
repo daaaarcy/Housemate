@@ -1,5 +1,6 @@
 package com.housemate.android;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -18,9 +19,9 @@ public class ProfileBorrowEntry implements IEntry
     private LayoutInflater inflater;
     private Owe owe;
 
-    public ProfileBorrowEntry(LayoutInflater inflater, Owe owe)
+    public ProfileBorrowEntry(Context context, Owe owe)
     {
-        this.inflater = inflater;
+        this.inflater = LayoutInflater.from(context);
         this.owe = owe;
     }
 

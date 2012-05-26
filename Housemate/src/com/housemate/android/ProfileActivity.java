@@ -35,16 +35,7 @@ public class ProfileActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         readProfileEntries();
-
-
-//        ArrayList<Entry> entries = new ArrayList<Entry>();
-//        entries.add(new Entry("Mike", 9.6));
-//        entries.add(new Entry("Una", 12.4));
-//
-//        ProfileAdapter profileAdapter = new ProfileAdapter(this, entries);
-//        this.setListAdapter(profileAdapter);
     }
 
     /**
@@ -59,16 +50,17 @@ public class ProfileActivity extends ListActivity
             JSONArray jsonArray = new JSONArray(content);
 //            Log.i(ProfileActivity.class.toString(), "No. of owes: " + jsonArray.length());
 
-            ArrayList<Owe> owes = new ArrayList<Owe>(jsonArray.length());
+            ArrayList<IEntry> entries = new ArrayList<IEntry>(jsonArray.length());
 
+            // Iterates the JSON array received from server
             for (int i = 0; i < jsonArray.length(); i++)
             {
                 JSONObject entryObject = jsonArray.getJSONObject(i);
 
-                boolean amILender = entryObject.getBoolean("am_i_lender");
-                String name = entryObject.getString("name");
-                String title = entryObject.getString("title");
-                double amount = entryObject.getDouble("amount");
+                final boolean amILender = entryObject.getBoolean("am_i_lender");
+                final String name = entryObject.getString("name");
+                final String title = entryObject.getString("title");
+                final double amount = entryObject.getDouble("amount");
                 try
                 {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.UK);
@@ -79,9 +71,18 @@ public class ProfileActivity extends ListActivity
                 {
                     e.printStackTrace();
                 }
-                owes.add(i, new Owe(name, title, amount, amILender));
+
+                final Owe owe = new Owe(name, title, amount, amILender);
+
+                // Converts owe to corresponding profile entry and add it to the list
+                IEntry entry;
+                if (amILender)
+                    entry = new ProfileLendEntry(this, owe);
+                else
+                    entry = new ProfileBorrowEntry(this, owe);
+                entries.add(i, entry);
             }
-            ProfileAdapter profileAdapter = new ProfileAdapter(this, owes);
+            ProfileAdapter profileAdapter = new ProfileAdapter(entries);
             this.setListAdapter(profileAdapter);
         }
         catch (JSONException e)

@@ -1,36 +1,28 @@
 package com.housemate.android;
 
-import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
-import com.bonsai.android.R;
 
 import java.util.ArrayList;
 
 public class ProfileAdapter extends BaseAdapter
 {
-    ArrayList<Owe> owes;
-    Context context;
-    LayoutInflater inflater;
+    private ArrayList<IEntry> entries;
 
-    public ProfileAdapter(Context context, ArrayList<Owe> owes)
+    public ProfileAdapter(ArrayList<IEntry> entries)
     {
-        this.context = context;
-        inflater = LayoutInflater.from(context);
-        this.owes = owes;
+        this.entries = entries;
     }
 
     public int getCount()
     {
-        return owes.size();
+        return entries.size();
     }
 
     public Object getItem(int position)
     {
-        return owes.get(position);
+        return entries.get(position);
     }
 
     public long getItemId(int position)
@@ -54,50 +46,14 @@ public class ProfileAdapter extends BaseAdapter
     @Override
     public int getItemViewType(int position)
     {
-        return owes.get(position).getAmILender() ? EntryType.LEND.ordinal() : EntryType.BORROW.ordinal();
+        return entries.get(position).getViewType();
     }
 
+    /*
+    Called when view of the entry is being generated
+     */
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        ViewHolder viewHolder;
-        if (convertView == null)
-        {
-            if (getItemViewType(position) == 0)
-            {
-                convertView = inflater.inflate(R.layout.profile_borrow_entry, null);
-                viewHolder = new ViewHolder();
-                viewHolder.name = (TextView) convertView.findViewById(R.id.prof_entry_name_b);
-                viewHolder.title = (TextView) convertView.findViewById(R.id.prof_entry_title_b);
-                viewHolder.amount = (TextView) convertView.findViewById(R.id.prof_entry_amt_b);
-                convertView.setTag(viewHolder);
-            }
-            else
-            {
-                convertView = inflater.inflate(R.layout.profile_lend_entry, null);
-                viewHolder = new ViewHolder();
-                viewHolder.name = (TextView) convertView.findViewById(R.id.prof_entry_name_l);
-                viewHolder.title = (TextView) convertView.findViewById(R.id.prof_entry_title_l);
-                viewHolder.amount = (TextView) convertView.findViewById(R.id.prof_entry_amt_l);
-                convertView.setTag(viewHolder);
-            }
-        }
-        else
-        {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        Owe entry = owes.get(position);
-        viewHolder.name.setText(entry.getName());
-        viewHolder.title.setText(entry.getTitle());
-        viewHolder.amount.setText(Double.toString(entry.getAmount()));
-
-        return convertView;
-    }
-
-    static class ViewHolder
-    {
-        TextView name;
-        TextView title;
-        TextView amount;
+        return entries.get(position).getView(convertView);
     }
 }
