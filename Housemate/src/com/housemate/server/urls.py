@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'housemate.views.home', name='home'),
     url(r'test', 'basic.views.test'),
     url(r'^profile/(?P<user_id>[\w._%+-]+@\w+(?:\.[A-Za-z]{2,4})+)$',
-        'basic.views.getProfileEntries'),
+        'basic.views.get_profile_entries'),
 
     # url(r'^housemate/', include('housemate.foo.urls')),
 

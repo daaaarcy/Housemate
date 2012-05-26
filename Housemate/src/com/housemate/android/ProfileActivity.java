@@ -6,14 +6,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class ProfileActivity extends ListActivity
 {
@@ -25,40 +36,107 @@ public class ProfileActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
 
+        readProfileEntries();
 
-        //TODO: Gets an arraylist of entry from remote database
+
+//        ArrayList<Entry> entries = new ArrayList<Entry>();
+//        entries.add(new Entry("Mike", 9.6));
+//        entries.add(new Entry("Una", 12.4));
+//
+//        ProfileAdapter profileAdapter = new ProfileAdapter(this, entries);
+//        this.setListAdapter(profileAdapter);
+    }
+
+    /**
+     * Reads the entry data from server and displays it
+     */
+    private void readProfileEntries()
+    {
+        String url = getServerAddress() + "profile/" + getUserEmail();
+        String content = executeGetRequest(url);
         try
         {
-            URL serverURL = new URL("http://127.0.0.1:8000");
-            URLConnection connection = serverURL.openConnection();
+            JSONArray jsonArray = new JSONArray(content);
+//            Log.i(ProfileActivity.class.toString(), "No. of owes: " + jsonArray.length());
 
-            // 10s connection time allowance
-            connection.setConnectTimeout(10000);
+            ArrayList<Owe> owes = new ArrayList<Owe>(jsonArray.length());
 
-            InputStream inputStream = serverURL.openStream();
-            Scanner scanner = new Scanner(inputStream);
-            while (scanner.hasNext())
+            for (int i = 0; i < jsonArray.length(); i++)
             {
-                Log.d("test", scanner.nextLine());
+                JSONObject entryObject = jsonArray.getJSONObject(i);
+
+                boolean amILender = entryObject.getBoolean("am_i_lender");
+                String name = entryObject.getString("name");
+                String title = entryObject.getString("title");
+                double amount = entryObject.getDouble("amount");
+                try
+                {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.UK);
+                    Date datetime = dateFormat.parse(entryObject.getString("datetime"));
+                    Log.i(ProfileActivity.class.toString(), amILender + "," + name + "," + title + "," + amount + "," + datetime);
+                }
+                catch (ParseException e)
+                {
+                    e.printStackTrace();
+                }
+                owes.add(i, new Owe(name, title, amount, amILender));
             }
-            //URLConnection connection = serverURL.openConnection();
+            ProfileAdapter profileAdapter = new ProfileAdapter(this, owes);
+            this.setListAdapter(profileAdapter);
         }
-        catch (MalformedURLException e)
+        catch (JSONException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
+        }
+    }
+
+    /*
+        Fires a GET request and returns the response body
+     */
+    private String executeGetRequest(String url)
+    {
+        StringBuilder builder = new StringBuilder();
+        DefaultHttpClient client = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(url);
+        try
+        {
+            HttpResponse response = client.execute(httpGet);
+            StatusLine statusLine = response.getStatusLine();
+            int statusCode = statusLine.getStatusCode();
+            if (statusCode == 200)
+            {
+                HttpEntity entity = response.getEntity();
+                InputStream content = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                String line;
+                while ((line = reader.readLine()) != null)
+                {
+                    builder.append(line);
+                }
+                reader.close();
+                entity.consumeContent();
+            }
+            else
+            {
+                Log.e(ProfileActivity.class.toString(), "Failed to download file");
+            }
         }
         catch (IOException e)
         {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
+        return builder.toString();
+    }
 
+    static String getUserEmail()
+    {
+        return "darcy@hm.com";
+    }
 
-        ArrayList<ProfileEntry> entries = new ArrayList<ProfileEntry>();
-        entries.add(new ProfileEntry("Mike", 9.6));
-        entries.add(new ProfileEntry("Una", 12.4));
-
-        ProfileAdapter profileAdapter = new ProfileAdapter(this, entries);
-        this.setListAdapter(profileAdapter);
+    static String getServerAddress()
+    {
+        // 127.0.0.1 refers to device's localhost, below is the PC's host loopback
+        return "http://10.0.2.2:8000/";
     }
 
     @Override

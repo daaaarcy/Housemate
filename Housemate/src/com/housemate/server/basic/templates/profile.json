@@ -1,11 +1,17 @@
 [
-{% for o in oweList %}
+{% for o in owe_list %}
     {% if forloop.counter != 1 %},{% endif %}
     {
-        lender : "{{o.lender__first_name}} {{o.lender__last_name}}",
-        borrower : "{{o.borrower__first_name}} {{o.borrower__last_name}}",
-        title : "{{o.title}}",
-        amount : {{o.amount}}
+        {% if o.lender_id == my_id %}
+            am_i_lender: true,
+            name: "{{o.lender__first_name}} {{o.lender__last_name}}",
+        {% else %}
+            am_i_lender: false,
+            name: "{{o.borrower__first_name}} {{o.borrower__last_name}}",
+        {% endif %}
+        title: "{{o.title}}",
+        amount: {{o.amount}},
+        datetime: "{{o.datetime|date:"c"}}"
     }
 {% endfor %}
 ]
