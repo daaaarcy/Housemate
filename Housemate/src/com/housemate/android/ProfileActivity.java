@@ -4,7 +4,6 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.bonsai.android.R;
@@ -39,17 +38,6 @@ public class ProfileActivity extends ListActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile);
 
-        // Gets refresh button and set on click listener
-        final Button refreshButton = (Button) findViewById(R.id.prof_refresh_btn);
-        refreshButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                readProfileEntries();
-            }
-        });
-
         // Reads profile entries from server
         readProfileEntries();
     }
@@ -71,7 +59,7 @@ public class ProfileActivity extends ListActivity
             // Iterates the JSON array received from server
             for (int i = 0; i < jsonArray.length(); i++)
             {
-                JSONObject entryObject = jsonArray.getJSONObject(i);
+                final JSONObject entryObject = jsonArray.getJSONObject(i);
 
                 final boolean amILender = entryObject.getBoolean("am_i_lender");
                 final String name = entryObject.getString("name");
@@ -98,10 +86,7 @@ public class ProfileActivity extends ListActivity
                     entry = new ProfileBorrowEntry(this, owe);
                 entries.add(i, entry);
             }
-            ProfileAdapter profileAdapter = new ProfileAdapter(entries);
-
-//            final ListView listView = (ListView) findViewById(R.id.prof_entry_list);
-//            listView.setAdapter(profileAdapter);
+            final ProfileAdapter profileAdapter = new ProfileAdapter(entries);
             setListAdapter(profileAdapter);
         }
         catch (JSONException e)
@@ -110,8 +95,8 @@ public class ProfileActivity extends ListActivity
         }
     }
 
-    /*
-        Fires a GET request and returns the response body
+    /**
+     * Fires a GET request and returns the response body
      */
     private String executeGetRequest(String url)
     {
@@ -164,5 +149,10 @@ public class ProfileActivity extends ListActivity
     {
         IEntry item = (IEntry) getListAdapter().getItem(position);
         Toast.makeText(this, item.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    public void refresh(View view)
+    {
+        readProfileEntries();
     }
 }
